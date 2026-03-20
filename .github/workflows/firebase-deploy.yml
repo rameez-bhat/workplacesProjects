@@ -1,0 +1,191 @@
+name: Smart Firebase Deploy
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+jobs:
+
+  # 🔍 STEP 1: Detect which project changed
+  detect-changes:
+    runs-on: ubuntu-latest
+    outputs:
+      ceobaramulla: ${{ steps.filter.outputs.ceobaramulla }}
+      hswarpora: ${{ steps.filter.outputs.hswarpora }}
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Detect changes
+        uses: dorny/paths-filter@v3
+        id: filter
+        with:
+          filters: |
+            ceobaramulla:
+              - 'ceoAccountsBla/**'
+            hswarpora:
+              - 'Hswarpora/**'
+
+  # 🚀 ADMIN DEPLOY
+  deploy-ceobaramulla:
+    needs: detect-changes
+    if: github.ref == 'refs/heads/main' && needs.detect-changes.outputs.ceobaramulla == 'true'
+    runs-on: ubuntu-latest
+    environment: ceoAccountsBla
+
+    steps:
+      - uses: actions/checkout@v3
+    
+      - name: Create .env file
+        run: |
+            cat > ceoAccountsBla/.env.production << EOF
+            VITE_APP_FIREBASE_APIKEY=${{ secrets.VITE_APP_FIREBASE_APIKEY }}
+            VITE_APP_FIREBASE_APPID=${{ secrets.VITE_APP_FIREBASE_APPID }}
+            VITE_APP_FIREBASE_AUTHDOMAIN=${{ secrets.VITE_APP_FIREBASE_AUTHDOMAIN }}
+            VITE_APP_FIREBASE_DATABASEURL=${{ secrets.VITE_APP_FIREBASE_DATABASEURL }}
+            VITE_APP_FIREBASE_MEASUREMENTID=${{ secrets.VITE_APP_FIREBASE_MEASUREMENTID }}
+            VITE_APP_FIREBASE_MESSAGINGSENDERID=${{ secrets.VITE_APP_FIREBASE_MESSAGINGSENDERID }}
+            VITE_APP_FIREBASE_PROJECTID=${{ secrets.VITE_APP_FIREBASE_PROJECTID }}
+            VITE_APP_FIREBASE_STORAGEBUCKET=${{ secrets.VITE_APP_FIREBASE_STORAGEBUCKET }}
+            CLIENT_ID=${{ secrets.CLIENT_ID }}
+            ClientSecret=${{ secrets.CLIENTSECRET }}
+            EOF
+        
+      - name: Build Ceobaramulla
+        run: |
+          cd ceoAccountsBla
+          npm install
+          npm run build
+
+      - name: Deploy Ceobaramulla
+        run: |
+          npm install -g firebase-tools
+
+          echo '${{ secrets.GOOGLE_APPLICATION_CREDENTIALS_JSON_CEOBARAMULLA }}' > $HOME/firebase-key.json
+          export GOOGLE_APPLICATION_CREDENTIALS=$HOME/firebase-key.json
+
+          cd ceoAccountsBla
+          firebase deploy --only hosting:ceoaccountsbla
+
+  # 🚀 LEADS DEPLOY
+  deploy-hswarpora:
+    needs: detect-changes
+    if: github.ref == 'refs/heads/main' && needs.detect-changes.outputs.hswarpora == 'true'
+    runs-on: ubuntu-latest
+    environment: Hswarpora
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Create .env file
+        run: |
+            cat > Hswarpora/.env.production << EOF
+            VITE_APP_FIREBASE_APIKEY=${{ secrets.VITE_APP_FIREBASE_APIKEY }}
+            VITE_APP_FIREBASE_APPID=${{ secrets.VITE_APP_FIREBASE_APPID }}
+            VITE_APP_FIREBASE_AUTHDOMAIN=${{ secrets.VITE_APP_FIREBASE_AUTHDOMAIN }}
+            VITE_APP_FIREBASE_DATABASEURL=${{ secrets.VITE_APP_FIREBASE_DATABASEURL }}
+            VITE_APP_FIREBASE_MEASUREMENTID=${{ secrets.VITE_APP_FIREBASE_MEASUREMENTID }}
+            VITE_APP_FIREBASE_MESSAGINGSENDERID=${{ secrets.VITE_APP_FIREBASE_MESSAGINGSENDERID }}
+            VITE_APP_FIREBASE_PROJECTID=${{ secrets.VITE_APP_FIREBASE_PROJECTID }}
+            VITE_APP_FIREBASE_STORAGEBUCKET=${{ secrets.VITE_APP_FIREBASE_STORAGEBUCKET }}
+            CLIENT_ID=${{ secrets.CLIENT_ID }}
+            ClientSecret=${{ secrets.CLIENTSECRET }}
+            EOF
+      - name: Build Hswarpora
+        run: |
+          cd Hswarpora
+          npm install
+          npm run build
+
+      - name: Deploy Hswarpora
+        run: |
+          npm install -g firebase-tools
+
+          echo '${{ secrets.GOOGLE_APPLICATION_CREDENTIALS_JSON_HSWARPORA }}' > $HOME/firebase-key.json
+          export GOOGLE_APPLICATION_CREDENTIALS=$HOME/firebase-key.json
+
+          cd Hswarpora
+          firebase deploy --only hosting:hswarporasopore
+
+  preview-ceobaramulla:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    environment: ceoAccountsBla
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Create .env file
+        run: |
+            cat > ceoAccountsBla/.env.production << EOF
+            VITE_APP_FIREBASE_APIKEY=${{ secrets.VITE_APP_FIREBASE_APIKEY }}
+            VITE_APP_FIREBASE_APPID=${{ secrets.VITE_APP_FIREBASE_APPID }}
+            VITE_APP_FIREBASE_AUTHDOMAIN=${{ secrets.VITE_APP_FIREBASE_AUTHDOMAIN }}
+            VITE_APP_FIREBASE_DATABASEURL=${{ secrets.VITE_APP_FIREBASE_DATABASEURL }}
+            VITE_APP_FIREBASE_MEASUREMENTID=${{ secrets.VITE_APP_FIREBASE_MEASUREMENTID }}
+            VITE_APP_FIREBASE_MESSAGINGSENDERID=${{ secrets.VITE_APP_FIREBASE_MESSAGINGSENDERID }}
+            VITE_APP_FIREBASE_PROJECTID=${{ secrets.VITE_APP_FIREBASE_PROJECTID }}
+            VITE_APP_FIREBASE_STORAGEBUCKET=${{ secrets.VITE_APP_FIREBASE_STORAGEBUCKET }}
+            CLIENT_ID=${{ secrets.CLIENT_ID }}
+            ClientSecret=${{ secrets.CLIENTSECRET }}
+            EOF
+      - name: Build Ceobaramulla
+        run: |
+          cd ceoAccountsBla
+          npm install
+          npm run build
+
+      - name: Deploy Ceobaramulla Preview
+        run: |
+          npm install -g firebase-tools
+
+          echo '${{ secrets.GOOGLE_APPLICATION_CREDENTIALS_JSON_CEOBARAMULLA }}' > $HOME/firebase-key.json
+          export GOOGLE_APPLICATION_CREDENTIALS=$HOME/firebase-key.json
+
+          cd ceoAccountsBla
+          firebase hosting:channel:deploy pr-${{ github.event.number }} \
+            --only hosting:ceoaccountsbla \
+            --expires 7d
+
+  # 🔥 PREVIEW LEADS
+  preview-hswarpora:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    environment: Hswarpora
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Create .env file
+        run: |
+            cat > Hswarpora/.env.production << EOF
+            VITE_APP_FIREBASE_APIKEY=${{ secrets.VITE_APP_FIREBASE_APIKEY }}
+            VITE_APP_FIREBASE_APPID=${{ secrets.VITE_APP_FIREBASE_APPID }}
+            VITE_APP_FIREBASE_AUTHDOMAIN=${{ secrets.VITE_APP_FIREBASE_AUTHDOMAIN }}
+            VITE_APP_FIREBASE_DATABASEURL=${{ secrets.VITE_APP_FIREBASE_DATABASEURL }}
+            VITE_APP_FIREBASE_MEASUREMENTID=${{ secrets.VITE_APP_FIREBASE_MEASUREMENTID }}
+            VITE_APP_FIREBASE_MESSAGINGSENDERID=${{ secrets.VITE_APP_FIREBASE_MESSAGINGSENDERID }}
+            VITE_APP_FIREBASE_PROJECTID=${{ secrets.VITE_APP_FIREBASE_PROJECTID }}
+            VITE_APP_FIREBASE_STORAGEBUCKET=${{ secrets.VITE_APP_FIREBASE_STORAGEBUCKET }}
+            CLIENT_ID=${{ secrets.CLIENT_ID }}
+            ClientSecret=${{ secrets.CLIENTSECRET }}
+            EOF
+      - name: Build Hswarpora
+        run: |
+          cd Hswarpora
+          npm install
+          npm run build
+
+      - name: Deploy Hswarpora Preview
+        run: |
+          npm install -g firebase-tools
+
+          echo '${{ secrets.GOOGLE_APPLICATION_CREDENTIALS_JSON_HSWARPORA }}' > $HOME/firebase-key.json
+          export GOOGLE_APPLICATION_CREDENTIALS=$HOME/firebase-key.json
+
+          cd Hswarpora
+          firebase hosting:channel:deploy pr-${{ github.event.number }} \
+            --only hosting:hswarporasopore \
+            --expires 7d
