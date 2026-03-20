@@ -52,6 +52,7 @@ jobs:
             CLIENT_ID=${{ secrets.CLIENT_ID }}
             ClientSecret=${{ secrets.CLIENTSECRET }}
             EOF
+            cp ceoAccountsBla/.env.production ceoAccountsBla/.env.development
         
       - name: Build Ceobaramulla
         run: |
@@ -93,6 +94,7 @@ jobs:
             CLIENT_ID=${{ secrets.CLIENT_ID }}
             ClientSecret=${{ secrets.CLIENTSECRET }}
             EOF
+            cp Hswarpora/.env.production Hswarpora/.env.development
       - name: Build Hswarpora
         run: |
           cd Hswarpora
@@ -131,6 +133,7 @@ jobs:
             CLIENT_ID=${{ secrets.CLIENT_ID }}
             ClientSecret=${{ secrets.CLIENTSECRET }}
             EOF
+            cp ceoAccountsBla/.env.production ceoAccountsBla/.env.development
       - name: Build Ceobaramulla
         run: |
           cd ceoAccountsBla
@@ -172,6 +175,7 @@ jobs:
             CLIENT_ID=${{ secrets.CLIENT_ID }}
             ClientSecret=${{ secrets.CLIENTSECRET }}
             EOF
+            cp Hswarpora/.env.production Hswarpora/.env.development
       - name: Build Hswarpora
         run: |
           cd Hswarpora
