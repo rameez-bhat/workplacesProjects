@@ -21,6 +21,8 @@ yarn.lock
 .env.production.local
 ceoaccountsblaServiceAccount.json
 service-account.json.json
+.env.production
+.env.development
 
 npm-debug.log*
 yarn-debug.log*
