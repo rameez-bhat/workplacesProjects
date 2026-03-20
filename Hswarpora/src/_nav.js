@@ -34,7 +34,7 @@ const getNavigation = (user) => {
     navigation = [
       {
         component: CNavItem,
-        name: 'Dashboard123',
+        name: 'Dashboard',
         to: '/admin/dashboard',
         icon: <CIcon icon={cilSpeedometer} customClassName="nav-icon" />,
         badge: {
