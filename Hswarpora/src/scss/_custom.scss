@@ -1,0 +1,92 @@
+// Here you can add other styles
+.DatePicker
+{
+    width: 100%;
+    min-height: 38px;
+}
+.react-datepicker-wrapper
+{
+width:100%;
+}
+.invalid-feedback
+{
+  display:block !important;
+    /*position: absolute;*/
+}
+.valid-feedback
+{
+  display:block !important;
+    /*position: absolute;*/
+}
+.overfolowscroll
+{
+	overflow-x: scroll;
+	width: 98%;
+}
+.overfolowscroll td
+{
+	min-width: 100px;
+}
+.ButtonFloat
+{
+	    position: fixed;
+    transform: translate(-50%, -50%);
+    left: 50%;
+}
+.minWidth
+{
+  min-width:110px;
+}
+.css-1nmdiq5-menu
+{
+  display: contents !important;
+}
+
+.ButtonFloat1
+{
+	    position: fixed;
+    transform: translate(64%, -50%);
+    left: 50%;
+}
+.card-body
+{
+      overflow: scroll;
+    position: relative;
+    width: 100%;
+}
+.PosAbs
+{
+	position: absolute;
+}
+.posRel
+{
+	position: relative;
+	height: 60px;
+	margin-top: 50px;
+}
+.redborder
+{
+    border: 2px solid #ee0c09;
+}
+.validationerror
+{
+  color:#ee0c09;
+}
+.greenborder
+{
+    border: 2px solid #0bf632;
+}
+.redbordermodel .modal-content
+{
+    border: 2px solid #ee0c09;
+}
+.greenbordermodel .modal-content
+{
+    border: 2px solid #0bf632;
+}
+.sticky-header th {
+  position: sticky;
+  top: 0;
+  background: #fff;   /* so it doesn’t overlap with table rows */
+  z-index: 10;        /* ensure it stays above cells */
+}
