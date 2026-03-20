@@ -78,7 +78,7 @@ const getNavigation = (user) => {
       },
       {
         component: CNavGroup,
-        name: 'Accounts Section',
+        name: 'Accounts Section1',
         to: '/base',
         icon: <CIcon icon={cilMoney} customClassName="nav-icon" />,
         items: [
