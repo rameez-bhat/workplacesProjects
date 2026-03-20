@@ -41,14 +41,14 @@ jobs:
       - name: Create .env file
         run: |
             cat > ceoAccountsBla/.env.production << EOF
-            VITE_APP_FIREBASE_APIKEY=${{ secrets.VITE_APP_FIREBASE_APIKEY }}
-            VITE_APP_FIREBASE_APPID=${{ secrets.VITE_APP_FIREBASE_APPID }}
-            VITE_APP_FIREBASE_AUTHDOMAIN=${{ secrets.VITE_APP_FIREBASE_AUTHDOMAIN }}
-            VITE_APP_FIREBASE_DATABASEURL=${{ secrets.VITE_APP_FIREBASE_DATABASEURL }}
-            VITE_APP_FIREBASE_MEASUREMENTID=${{ secrets.VITE_APP_FIREBASE_MEASUREMENTID }}
-            VITE_APP_FIREBASE_MESSAGINGSENDERID=${{ secrets.VITE_APP_FIREBASE_MESSAGINGSENDERID }}
-            VITE_APP_FIREBASE_PROJECTID=${{ secrets.VITE_APP_FIREBASE_PROJECTID }}
-            VITE_APP_FIREBASE_STORAGEBUCKET=${{ secrets.VITE_APP_FIREBASE_STORAGEBUCKET }}
+            VITE_APP_FIREBASE_apiKey=${{ secrets.VITE_APP_FIREBASE_APIKEY }}
+            VITE_APP_FIREBASE_appId=${{ secrets.VITE_APP_FIREBASE_APPID }}
+            VITE_APP_FIREBASE_authDomain=${{ secrets.VITE_APP_FIREBASE_AUTHDOMAIN }}
+            VITE_APP_FIREBASE_databaseURL=${{ secrets.VITE_APP_FIREBASE_DATABASEURL }}
+            VITE_APP_FIREBASE_measurementId=${{ secrets.VITE_APP_FIREBASE_MEASUREMENTID }}
+            VITE_APP_FIREBASE_messagingSenderId=${{ secrets.VITE_APP_FIREBASE_MESSAGINGSENDERID }}
+            VITE_APP_FIREBASE_projectId=${{ secrets.VITE_APP_FIREBASE_PROJECTID }}
+            VITE_APP_FIREBASE_storageBucket=${{ secrets.VITE_APP_FIREBASE_STORAGEBUCKET }}
             CLIENT_ID=${{ secrets.CLIENT_ID }}
             ClientSecret=${{ secrets.CLIENTSECRET }}
             EOF
@@ -83,14 +83,14 @@ jobs:
       - name: Create .env file
         run: |
             cat > Hswarpora/.env.production << EOF
-            VITE_APP_FIREBASE_APIKEY=${{ secrets.VITE_APP_FIREBASE_APIKEY }}
-            VITE_APP_FIREBASE_APPID=${{ secrets.VITE_APP_FIREBASE_APPID }}
-            VITE_APP_FIREBASE_AUTHDOMAIN=${{ secrets.VITE_APP_FIREBASE_AUTHDOMAIN }}
-            VITE_APP_FIREBASE_DATABASEURL=${{ secrets.VITE_APP_FIREBASE_DATABASEURL }}
-            VITE_APP_FIREBASE_MEASUREMENTID=${{ secrets.VITE_APP_FIREBASE_MEASUREMENTID }}
-            VITE_APP_FIREBASE_MESSAGINGSENDERID=${{ secrets.VITE_APP_FIREBASE_MESSAGINGSENDERID }}
-            VITE_APP_FIREBASE_PROJECTID=${{ secrets.VITE_APP_FIREBASE_PROJECTID }}
-            VITE_APP_FIREBASE_STORAGEBUCKET=${{ secrets.VITE_APP_FIREBASE_STORAGEBUCKET }}
+            VITE_APP_FIREBASE_apiKey=${{ secrets.VITE_APP_FIREBASE_APIKEY }}
+            VITE_APP_FIREBASE_appId=${{ secrets.VITE_APP_FIREBASE_APPID }}
+            VITE_APP_FIREBASE_authDomain=${{ secrets.VITE_APP_FIREBASE_AUTHDOMAIN }}
+            VITE_APP_FIREBASE_databaseURL=${{ secrets.VITE_APP_FIREBASE_DATABASEURL }}
+            VITE_APP_FIREBASE_measurementId=${{ secrets.VITE_APP_FIREBASE_MEASUREMENTID }}
+            VITE_APP_FIREBASE_messagingSenderId=${{ secrets.VITE_APP_FIREBASE_MESSAGINGSENDERID }}
+            VITE_APP_FIREBASE_projectId=${{ secrets.VITE_APP_FIREBASE_PROJECTID }}
+            VITE_APP_FIREBASE_storageBucket=${{ secrets.VITE_APP_FIREBASE_STORAGEBUCKET }}
             CLIENT_ID=${{ secrets.CLIENT_ID }}
             ClientSecret=${{ secrets.CLIENTSECRET }}
             EOF
@@ -122,14 +122,14 @@ jobs:
       - name: Create .env file
         run: |
             cat > ceoAccountsBla/.env.production << EOF
-            VITE_APP_FIREBASE_APIKEY=${{ secrets.VITE_APP_FIREBASE_APIKEY }}
-            VITE_APP_FIREBASE_APPID=${{ secrets.VITE_APP_FIREBASE_APPID }}
-            VITE_APP_FIREBASE_AUTHDOMAIN=${{ secrets.VITE_APP_FIREBASE_AUTHDOMAIN }}
-            VITE_APP_FIREBASE_DATABASEURL=${{ secrets.VITE_APP_FIREBASE_DATABASEURL }}
-            VITE_APP_FIREBASE_MEASUREMENTID=${{ secrets.VITE_APP_FIREBASE_MEASUREMENTID }}
-            VITE_APP_FIREBASE_MESSAGINGSENDERID=${{ secrets.VITE_APP_FIREBASE_MESSAGINGSENDERID }}
-            VITE_APP_FIREBASE_PROJECTID=${{ secrets.VITE_APP_FIREBASE_PROJECTID }}
-            VITE_APP_FIREBASE_STORAGEBUCKET=${{ secrets.VITE_APP_FIREBASE_STORAGEBUCKET }}
+            VITE_APP_FIREBASE_apiKey=${{ secrets.VITE_APP_FIREBASE_APIKEY }}
+            VITE_APP_FIREBASE_appId=${{ secrets.VITE_APP_FIREBASE_APPID }}
+            VITE_APP_FIREBASE_authDomain=${{ secrets.VITE_APP_FIREBASE_AUTHDOMAIN }}
+            VITE_APP_FIREBASE_databaseURL=${{ secrets.VITE_APP_FIREBASE_DATABASEURL }}
+            VITE_APP_FIREBASE_measurementId=${{ secrets.VITE_APP_FIREBASE_MEASUREMENTID }}
+            VITE_APP_FIREBASE_messagingSenderId=${{ secrets.VITE_APP_FIREBASE_MESSAGINGSENDERID }}
+            VITE_APP_FIREBASE_projectId=${{ secrets.VITE_APP_FIREBASE_PROJECTID }}
+            VITE_APP_FIREBASE_storageBucket=${{ secrets.VITE_APP_FIREBASE_STORAGEBUCKET }}
             CLIENT_ID=${{ secrets.CLIENT_ID }}
             ClientSecret=${{ secrets.CLIENTSECRET }}
             EOF
@@ -164,14 +164,14 @@ jobs:
       - name: Create .env file
         run: |
             cat > Hswarpora/.env.production << EOF
-            VITE_APP_FIREBASE_APIKEY=${{ secrets.VITE_APP_FIREBASE_APIKEY }}
-            VITE_APP_FIREBASE_APPID=${{ secrets.VITE_APP_FIREBASE_APPID }}
-            VITE_APP_FIREBASE_AUTHDOMAIN=${{ secrets.VITE_APP_FIREBASE_AUTHDOMAIN }}
-            VITE_APP_FIREBASE_DATABASEURL=${{ secrets.VITE_APP_FIREBASE_DATABASEURL }}
-            VITE_APP_FIREBASE_MEASUREMENTID=${{ secrets.VITE_APP_FIREBASE_MEASUREMENTID }}
-            VITE_APP_FIREBASE_MESSAGINGSENDERID=${{ secrets.VITE_APP_FIREBASE_MESSAGINGSENDERID }}
-            VITE_APP_FIREBASE_PROJECTID=${{ secrets.VITE_APP_FIREBASE_PROJECTID }}
-            VITE_APP_FIREBASE_STORAGEBUCKET=${{ secrets.VITE_APP_FIREBASE_STORAGEBUCKET }}
+            VITE_APP_FIREBASE_apiKey=${{ secrets.VITE_APP_FIREBASE_APIKEY }}
+            VITE_APP_FIREBASE_appId=${{ secrets.VITE_APP_FIREBASE_APPID }}
+            VITE_APP_FIREBASE_authDomain=${{ secrets.VITE_APP_FIREBASE_AUTHDOMAIN }}
+            VITE_APP_FIREBASE_databaseURL=${{ secrets.VITE_APP_FIREBASE_DATABASEURL }}
+            VITE_APP_FIREBASE_measurementId=${{ secrets.VITE_APP_FIREBASE_MEASUREMENTID }}
+            VITE_APP_FIREBASE_messagingSenderId=${{ secrets.VITE_APP_FIREBASE_MESSAGINGSENDERID }}
+            VITE_APP_FIREBASE_projectId=${{ secrets.VITE_APP_FIREBASE_PROJECTID }}
+            VITE_APP_FIREBASE_storageBucket=${{ secrets.VITE_APP_FIREBASE_STORAGEBUCKET }}
             CLIENT_ID=${{ secrets.CLIENT_ID }}
             ClientSecret=${{ secrets.CLIENTSECRET }}
             EOF
