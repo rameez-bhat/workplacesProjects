@@ -67,7 +67,7 @@ jobs:
           export GOOGLE_APPLICATION_CREDENTIALS=$HOME/firebase-key.json
 
           cd ceoAccountsBla
-          firebase deploy --only hosting:ceoaccountsbla
+          firebase deploy --only hosting:ceoaccountsbla --project ceoaccountsbla
 
   # 🚀 LEADS DEPLOY
   deploy-hswarpora:
@@ -107,7 +107,7 @@ jobs:
           export GOOGLE_APPLICATION_CREDENTIALS=$HOME/firebase-key.json
 
           cd Hswarpora
-          firebase deploy --only hosting:hswarporasopore
+          firebase deploy --only hosting:hswarporasopore --project hswarporasopore
 
   preview-ceobaramulla:
     if: github.event_name == 'pull_request'
