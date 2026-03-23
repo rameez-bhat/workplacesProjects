@@ -1,0 +1,81 @@
+// Here you can add other styles
+.DatePicker
+{
+    width: 100%;
+    min-height: 38px;
+}
+.invalid-feedback
+{
+  display:block !important;
+    /*position: absolute;*/
+}
+.overfolowscroll
+{
+	overflow-x: scroll;
+	width: 98%;
+}
+.overfolowscroll td
+{
+	min-width: 100px;
+}
+.SectionSele
+{
+  margin: 16px 0px 22px 0px;
+      padding-bottom: 36px;
+}
+.SectionSele:nth-child(odd) {
+    background-color: lightblue;
+}
+.SectionSele:nth-child(even) {
+    background-color: #e1ade6;
+}
+.ButtonFloat
+{
+	    position: fixed;
+    transform: translate(-50%, -50%);
+    left: 50%;
+}
+.ButtonFloat1
+{
+	    position: fixed;
+    transform: translate(64%, -50%);
+    left: 50%;
+}
+.PosAbs
+{
+	position: absolute;
+}
+.posRel
+{
+	position: relative;
+	height: 60px;
+	margin-top: 50px;
+}
+.MinWidth
+{
+  min-width:140px;
+}
+.tab-content > .tab-pane {
+display:block !important;
+}
+.fade:not(.show) {
+    opacity: 1 !important;
+}
+.CellClass:has(.ThisisDropdown) {
+  min-width:170px;
+}
+.ThisisDropdown
+{
+  width:100%;
+  background: white;
+}
+.TableData
+{
+max-height: 600px;
+}
+.TableData table thead th {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background: #fff; /* ensure header isn’t transparent */
+}
