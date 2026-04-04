@@ -133,15 +133,15 @@ console.log("AuthUser---->",AuthUser)
   console.log("key---->",key)
   console.log("value---->",value)
   const str=value.toString();
-    if (str.includes( "ignore")) {
-    console.log("tempCurrent---->",tempCurrent)
-      delete tempCurrent.columntoverify[key];
-      delete tempCurrent.headerrows?.[key];
-      delete tempCurrent.sheetname?.[key];
+    if (str.includes( "ignore")) 
+    {
+    	console.log("tempCurrent---->",tempCurrent)
+      	delete tempCurrent.columntoverify[key];
+      	delete tempCurrent.headerrows?.[key];
+      	delete tempCurrent.sheetname?.[key];
     }
   });
   setCurrentData(tempCurrent);
-    console.log("tempCurrent---->",tempCurrent)
       const dataToSave = {
         ...tempCurrent,
         columntoverify:[1],
