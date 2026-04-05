@@ -148,14 +148,14 @@ console.log("AuthUser---->",AuthUser)
         updateTime: firestoreQueries.Timestamp.fromDate(new Date()),
         sid: 1,
       };
-     /*let result1= await firestoreQueries.deleteFieldWithCondition(DatabaseName, 'settings', "columntoverify",'settingtype', '==', settingtype));
-      let result2= await firestoreQueries.deleteFieldWithCondition(DatabaseName, 'settings', "headerrows",'settingtype', '==', settingtype));
-      let result3=await firestoreQueries.deleteFieldWithCondition(DatabaseName, 'settings', "labelcolumn",'settingtype', '==', settingtype));
-      let result4=await firestoreQueries.deleteFieldWithCondition(DatabaseName, 'settings', "sheetname",'settingtype', '==', settingtype));
+     	let result1= await firestoreQueries.deleteFieldWithCondition(DatabaseName, 'settings', "columntoverify",'settingtype', '==', settingtype);
+      let result2= await firestoreQueries.deleteFieldWithCondition(DatabaseName, 'settings', "headerrows",'settingtype', '==', settingtype);
+      let result3=await firestoreQueries.deleteFieldWithCondition(DatabaseName, 'settings', "labelcolumn",'settingtype', '==', settingtype);
+      let result4=await firestoreQueries.deleteFieldWithCondition(DatabaseName, 'settings', "sheetname",'settingtype', '==', settingtype);
       console.log("result1----->",result1)
       console.log("result2----->",result2)
       console.log("result3----->",result3)
-      console.log("result4----->",result4)*/
+      console.log("result4----->",result4)
       const result = await firestoreQueries.updateOrCreateByField(DatabaseName, 'settings','settingtype', '==', settingtype, dataToSave);
 
       addToast({

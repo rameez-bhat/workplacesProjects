@@ -27,6 +27,7 @@ import { useLoading } from '../../layout/LoadingContext';
 let sheetName="";
 let sheetID="";
 let dataShown=[];
+let MainSheetName=[];
 let SubmissionIsOver=false;
 const GoogleSheetTable = ({ ActualUser, AuthUser }) => {
   const [sheetsData, setSheetsData] = useState([]);
@@ -104,6 +105,7 @@ const RemoveSpaceIfNumber = (str) => {
         expiryTimestamp=new Date(settingsData[0].expiry.seconds * 1000);
 
         let sheetNames = Object.values(settingsData[0].sheetname);
+        MainSheetName=sheetNames;
         if(Object.keys(settingsData[0].sheetname).length)
         {
           sheetNames = sheetNames.filter(name => !name.includes("DONT-TOUCH"));
@@ -116,7 +118,8 @@ const RemoveSpaceIfNumber = (str) => {
       setSheetInfo(sheetnames.map(name => ({ sheetID, name })));
       if (expiryTimestamp > today )
       {
-        fetchData(sheetID, sheetnames[0],settingsData[0].headerrows[0],settingsData[0].labelcolumn[0],settingsData[0].columntoverify[0]);
+      	let getIndex=MainSheetName.length-sheetnames.length;
+        fetchData(sheetID, sheetnames[0],settingsData[0].headerrows[getIndex],settingsData[0].labelcolumn[getIndex],settingsData[0].columntoverify[0]);
       }
       else
       {
