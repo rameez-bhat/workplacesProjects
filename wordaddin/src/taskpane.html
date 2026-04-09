@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>GPF Form</title>
+  <script src="https://appsforoffice.microsoft.com/lib/1/hosted/office.js"></script>
+  <script src="taskpane.js"></script>
+</head>
+<body>
+
+<h3>GPF Advance Form</h3>
+
+<input id="name" placeholder="Name"><br>
+<input id="designation" placeholder="Designation"><br>
+<input id="amount" placeholder="Amount"><br>
+<input id="rule" placeholder="Rule No"><br>
+<input id="purpose" placeholder="Purpose"><br>
+
+<h4>Balance Details</h4>
+<input id="te" placeholder="TE Amount"><br>
+<input id="balance" placeholder="Balance Slip"><br>
+<input id="subscription" placeholder="Subscription"><br>
+<input id="refunds" placeholder="Refunds"><br>
+<input id="da" placeholder="DA"><br>
+<input id="withdrawals" placeholder="Withdrawals"><br>
+
+<br>
+
+<button onclick="generateDoc()">Generate Document</button>
+<button onclick="savePrintPage()">Mark Printed Page</button>
+<button onclick="resumePrint()">Resume Print</button>
+
+</body>
+</html>
