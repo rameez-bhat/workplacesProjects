@@ -3,6 +3,7 @@ import { Link,useParams } from 'react-router-dom';
 import Select1 from 'react-select';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
+import '../../views/DDO/custom.css';
 import {
   CCard, CCardBody, CCardHeader, CCol, CTable, CTableBody, CTableDataCell,CFormSelect,
   CTableHead, CFormInput, CTableHeaderCell, CTableRow, CButton, CAlert, CNav, CNavItem, CNavLink, CTabContent, CTabPane
@@ -71,6 +72,9 @@ const RemoveSpaceIfNumber = (str) => {
     try {
       showLoading();
  dataShown=[];
+ console.log("ddoid===>",ddoid)
+ console.log("settingtype===>",settingtype)
+ console.log("settingtype===>",settingtype)
       let expiryTimestamp;// Convert seconds to milliseconds
     const today = new Date();
         let GetUserData;
@@ -95,7 +99,7 @@ const RemoveSpaceIfNumber = (str) => {
        setAllowedRowValue(AllowedRowValue1)
       const settingsData = await firestoreQueries.FetchDataFromCollection(DatabaseName, "settings", 100, 'settingtype', '==', settingtype);
       //
-
+      
       let sheeturl="";
       let sheetnames=[];
       if (settingsData.length)
@@ -119,6 +123,9 @@ const RemoveSpaceIfNumber = (str) => {
       if (expiryTimestamp > today )
       {
       	let getIndex=MainSheetName.length-sheetnames.length;
+      	console.log("GetUserData===>",GetUserData)
+	console.log("settingsData===>",settingsData)
+	console.log("getIndex===>",getIndex)
         fetchData(sheetID, sheetnames[0],settingsData[0].headerrows[getIndex],settingsData[0].labelcolumn[getIndex],settingsData[0].columntoverify[0]);
       }
       else
@@ -137,12 +144,32 @@ const extractSheetID = (url) => {
     const match = url.match(regex);
     return match ? match[1] : null;
   };
-  const roundToTwoDecimalPlaces = (num) => {
-  const number = parseFloat(num);
-  if (isNaN(number)) return '';  // return empty string not 0 for empty cells
-  // Remove floating point artifacts — round to 6 significant decimals
+const roundToTwoDecimalPlaces = (num) => {
+  // If it's already a number → proceed
+  if (typeof num === "number") {
+    const rounded = parseFloat(num.toFixed(6));
+    return parseFloat(rounded.toFixed(3));
+  }
+
+  // If it's not a string → return as is
+  if (typeof num !== "string") return num;
+
+  const trimmed = num.trim();
+
+  // If empty → return empty
+  if (trimmed === "") return "";
+
+  // Check if it's a valid number string
+  if (!/^[-+]?\d*\.?\d+$/.test(trimmed)) {
+    return num; // return original unchanged
+  }
+
+  const number = parseFloat(trimmed);
+
+  // Remove floating point artifacts
   const rounded = parseFloat(number.toFixed(6));
-  // Then display with up to 3 meaningful decimal places
+
+  // Final rounding
   return parseFloat(rounded.toFixed(3));
 };
   const fetchData = async (sheetID1, sheetName1,headerRowCount,LableColumnCount,vefifyfields) => {
@@ -169,7 +196,7 @@ sheetName=sheetName1;
 const sheetResponse = await axios.get(
   `https://sheets.googleapis.com/v4/spreadsheets/${sheetID}?includeGridData=true&ranges=${sheetName}&key=${API_KEY}`
 );
-
+console.log("sheetResponse--->",sheetResponse)
 const sheetData = sheetResponse.data.sheets.find(
   (sheet) => sheet.properties.title === sheetName
 );
@@ -821,6 +848,7 @@ const renderHeaders = () => {
       <CTableHead>
         {Array.from({ length: headerRowCount }, (_, rowIndex) => {
           let skipColumns = 0;
+          let groupIndex = 0;
           return (
             <CTableRow key={rowIndex}>
               {tableData[rowIndex]?.map((headerCell, cellIndex) => {
@@ -830,9 +858,11 @@ const renderHeaders = () => {
                 }
 
                 const { rowSpan, colSpan } = getMergedCellSpan(rowIndex, cellIndex);
-
+				let className = "";
                 if (colSpan > 1) {
+                className = groupIndex % 2 === 0 ? "th-group-1" : "th-group-2";
                   skipColumns = colSpan - 1;
+                  groupIndex++;
                 }
 
                 return (
@@ -840,6 +870,7 @@ const renderHeaders = () => {
                     key={cellIndex}
                     rowSpan={rowSpan}
                     colSpan={colSpan}
+                    className={className}
                   >
                     {headerCell || ''}
                   </CTableHeaderCell>

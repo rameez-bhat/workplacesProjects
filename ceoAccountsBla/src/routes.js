@@ -45,6 +45,7 @@ const routes = {"public":[
 ],
 "ZONELEVEL":[
 { path: '/ddo/adddatazonelevel/:zoneddocode?/:ddoid?', name: 'Add Data Zone Level',exact: true, element: AddDatazonelevel },
+{ path: '/ddo/adddata/:settingtype/:ddoid?', name: 'AddData',exact: true, element: AddData },
 ],
 "DDOZEO":[
 { path: '/ddo/changepassword', name: 'ChangePassword',exact: true, element: ChangePassword },
