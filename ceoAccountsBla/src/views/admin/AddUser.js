@@ -437,7 +437,7 @@ console.log("rows---->",rows)
       const lowerCaseEmail = row.email.toLowerCase();
 
       const createUserRes = await axios.post(
-        "https://us-central1-ceoaccountsbla.cloudfunctions.net/createUser",
+        "https://createuser-f6dijyh4qq-uc.a.run.app",
         {
           StudentEmail: lowerCaseEmail,
           password: row.Password,
@@ -454,6 +454,7 @@ console.log("rows---->",rows)
         id:uid,
         ddocode: row.UDISE,
         role: "ZONELEVEL",
+        zeocode:"BONEDU0007",
         userType: "zonelevel",
         zone: row["ZONE"],
         village: row["VILLAGENAME"],
@@ -482,16 +483,28 @@ console.log("rows---->",rows)
 
       if (uid) {
 
-        await firestoreQueries.updateOrCreateById(
+        const rtt=await firestoreQueries.updateOrCreateById(
           DatabaseName,
           "users",
           uid,
           {
             email: row.email,
-            name: row["Name of the School"],
+            name: row["NameoftheSchool"],
             ddocode: row.UDISE,
+            zeocode:"BONEDU0007",
+            role: "ZONELEVEL",
+        	userType: "zonelevel",
+        	zone: row["ZONE"],
+        	village: row["VILLAGENAME"],
+        	panchayat: row["PANCHAYATNAME"],
+            listoflinks:{[row.UDISE]:row.UDISE},
+            cluster: row.CLUSTER,
+        	createTime: firestoreQueries.Timestamp.fromDate(new Date()),
+        	updateTime: firestoreQueries.Timestamp.fromDate(new Date()),
           }
         );
+        
+        console.log("rtt====>",rtt)
       }
     }
   }

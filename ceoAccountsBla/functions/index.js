@@ -115,3 +115,30 @@ exports.updatePassword = functions.https.onRequest(async (req, res) => {
     }
   });
 });
+exports.createUser = functions.https.onRequest(async (req, res) => {
+  cors(req, res, async () => {
+    if (req.method !== "POST") {
+      return res.status(405).send("Method Not Allowed");
+    }
+
+    const { StudentEmail, password, StudentName }= req.body;
+
+    try {
+      const userRecord = await admin.auth().createUser({
+        email: StudentEmail, password, displayName: StudentName });
+      res.status(201).send({ status: "success", data: userRecord });
+    } catch (error) {
+      if (error.code === 'auth/email-already-exists') {
+        try {
+          // Fetch the existing user's details using the email
+          const existingUser = await admin.auth().getUserByEmail(StudentEmail);
+          res.status(400).send({ status: "error", data: error.message, user: existingUser });
+        } catch (fetchError) {
+          // Handle error if there is an issue fetching the existing user
+          res.status(400).send({ status: "error", data: fetchError.message });
+        }
+      }
+      res.status(400).send({ status: "error", data: error.message });
+    }
+  });
+});
