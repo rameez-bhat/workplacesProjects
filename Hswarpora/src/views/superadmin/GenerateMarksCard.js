@@ -74,6 +74,7 @@ let MarksObtained=0;
 let SessionSelected = '';
 let GrandMaxMarks=0;
 let GrandMarksObtained=0;
+let SettingsListed;
 let ListOfSubjectFullObject={};
 const Validation =  () => {
 const { cid,yearPar,classPar,studentPar } = useParams();
@@ -92,9 +93,10 @@ const [medicalSchoolOptionsList, setMedicalSchoolOptionsList] = useState([]);
 const {showLoading,hideLoading,firestoreQueries,DatabaseName,TooltipsPopovers} = useLoading();
 const [toast, addToast] = useState(0)
 const toaster = useRef()
-
+console.log("yearPar====>",yearPar)
 if(typeof yearPar!=="undefined")
 {
+console.log("yearPar====>",yearPar)
   YearToBeSelected=decodeURIComponent(escape(atob(yearPar)));
   if(typeof classPar!=="undefined")
   {
@@ -119,7 +121,9 @@ if(typeof yearPar!=="undefined")
 }
 else
 {
-  (async function () {
+console.log("yearPar====>",yearPar);
+  (async function() {
+  console.log("yearPar====>",yearPar)
   const SettingsListed=await firestoreQueries.FetchDataFromCollection(DatabaseName, "settings", 1000, 'settingtype', '==', "currentyear","currentyear","asc");
     console.log("SettingsListed----->",SettingsListed)
     if(SettingsListed.length)
@@ -127,10 +131,12 @@ else
     	YearToBeSelected=SettingsListed[0].currentyear;
     }
   })
+YearToBeSelected=2026;
 	
 }
 SessionSelected=`${YearToBeSelected - 1}-${String(YearToBeSelected).slice(2)}`;
 const fetchStudentsDefault = useCallback(async () => {
+
 setCurrentData((prevValues) => 
     ({
       ...prevValues,
@@ -178,8 +184,6 @@ else
 {
   fetchData();
 }
-
-
   }, []);
   useEffect(() => {
  
@@ -212,6 +216,15 @@ else
   }
   
   const fetchData = async () => {
+if(typeof yearPar!=="undefined")
+{
+	SettingsListed=await firestoreQueries.FetchDataFromCollection(DatabaseName, "settings", 1000, 'settingtype', '==', "currentyear","currentyear","asc");
+    console.log("SettingsListed----->",SettingsListed)
+    if(SettingsListed.length)
+    {
+    	YearToBeSelected=SettingsListed[0].currentyear;
+    }
+}
    //await firestoreQueries.copyCollection(DatabaseName,"studentsBK","students");
     const ListOfClasses=await firestoreQueries.FetchDataFromCollection(DatabaseName, "classes", 1000, null, null, "DDO","FieldOrderCol","asc");
     //const ListOfTeachers=await firestoreQueries.FetchDataFromCollection(DatabaseName, "users", 1000, 'role', '==', "Teacher","name","asc");
