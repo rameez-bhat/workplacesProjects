@@ -93,6 +93,7 @@ const RemoveSpaceIfNumber = (str) => {
           GetUserData=ActualUser;
         }
        let  AllowedRowValue1 = Object.values(GetUserData.listoflinks);
+       console.log("AllowedRowValue1====>",AllowedRowValue1)
        setAllowedRowValue(AllowedRowValue1)
        if(typeof zoneddocode=="undefined" && typeof GetUserData?.zeocode!="undefined")
        {
@@ -628,7 +629,7 @@ const handleSubmitUpdates = async () => {
     const rowIndices = [];
 
     Object.entries(editedRows).forEach(([rowIndex, updatedCells]) => {
-      if (!AllowedRowValue.includes(tableData[parseInt(rowIndex)][1])) return;
+      if (!AllowedRowValue.map(String).includes(String(tableData[parseInt(rowIndex)][1]))) return;
       const updatedRow = tableData[parseInt(rowIndex)].map((cell, cellIndex) => {
         const formulaCell = formulasData[rowIndex]?.[cellIndex];
 
@@ -723,7 +724,7 @@ const selectAndFlattenRows = (sheetData, selectedRows) => {
     SelectRowsAre.push(rowIndex)
     })
      const filteredRows = Object.entries(editedRows)
-      .filter(([rowIndex]) => AllowedRowValue.includes(tableData[parseInt(rowIndex)][1])) // Filter allowed rows
+      .filter(([rowIndex]) => AllowedRowValue.map(String).includes(String(tableData[parseInt(rowIndex)][1]))) // Filter allowed rows
       .map(([rowIndex, updatedCells]) => {
         const updatedRow = tableData[parseInt(rowIndex)].map((cell, cellIndex) => {
           const formulaCell = formulasData[rowIndex]?.[cellIndex];
@@ -881,7 +882,7 @@ const renderHeaders = () => {
 
     return tableData
       .map((row, originalRowIndex) => {
-        if (!AllowedRowValue.includes(row[1])) return null;
+        if (!AllowedRowValue.map(String).includes(String(row[1]))) return null;
         return (
           <CTableRow key={originalRowIndex}>
             {row.map((cell, cellIndex) => {

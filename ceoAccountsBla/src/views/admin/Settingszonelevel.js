@@ -22,8 +22,7 @@ import axios from 'axios';
 import { useLoading } from '../../layout/LoadingContext';
 
 const Validation = ({ ActualUser, AuthUser }) => {
-console.log("ActualUser---->",ActualUser)
-console.log("AuthUser---->",AuthUser)
+
   const [errors, setErrors] = useState({});
   const [CurrentData, setCurrentData] = useState({});
   const [SheetNameList, setSheetNameList] = useState([]);
@@ -40,7 +39,6 @@ console.log("AuthUser---->",AuthUser)
     const SettingsGot = await firestoreQueries.FetchDataFromCollection(DatabaseName, 'settings', 1000, 'settingtype', '==', zoneddocode);
     if (SettingsGot.length) {
       setCurrentData(SettingsGot[0]);
-      console.log("SettingsGot[0].sheetname---->",SettingsGot[0].sheetname)
       if(Object.keys(SettingsGot[0].sheetname).length)
       {
         setSheetNameList(Object.values(SettingsGot[0].sheetname));

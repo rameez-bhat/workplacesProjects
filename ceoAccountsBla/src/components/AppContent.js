@@ -17,6 +17,7 @@ let fetchName="";
   {
   	actualRoute=actualRoute+"ZEO";
   }
+  console.log("actualRoute----<",AuthUser)
   return (
     <CContainer className="px-4" lg>
       <Suspense fallback={<CSpinner color="primary" />}>

@@ -441,10 +441,10 @@ console.log("rows---->",rows)
         {
           StudentEmail: lowerCaseEmail,
           password: row.Password,
-          StudentName: row["Name of the School"],
+          StudentName: row["NameoftheSchool"],
         }
       );
-
+console.log("createUserRes====>",createUserRes)
       const uid = createUserRes.data.data.uid;
 
       const firestoreData = {
@@ -454,7 +454,7 @@ console.log("rows---->",rows)
         id:uid,
         ddocode: row.UDISE,
         role: "ZONELEVEL",
-        zeocode:"BONEDU0007",
+        zeocode:row["DDOCODE"],
         userType: "zonelevel",
         zone: row["ZONE"],
         village: row["VILLAGENAME"],
@@ -491,7 +491,9 @@ console.log("rows---->",rows)
             email: row.email,
             name: row["NameoftheSchool"],
             ddocode: row.UDISE,
-            zeocode:"BONEDU0007",
+            uid: uid,
+            id:uid,
+            zeocode:row["DDOCODE"],
             role: "ZONELEVEL",
         	userType: "zonelevel",
         	zone: row["ZONE"],

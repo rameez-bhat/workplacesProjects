@@ -29,12 +29,14 @@ const App = () => {
     const theme = urlParams.get('theme') && urlParams.get('theme').match(/^[A-Za-z0-9\s]+/)[0]
     //firestoreQueries.updateOrCreateByField("website1", "users", "email", "test@example.com", data);
      const unsubscribe = onAuthStateChanged  (auth, async (user) => {
+     console.log("user======>",user)
       if (user) {
       AuthUser=user;
       setAuthUserR(AuthUser)
       let data={"name":"Shafi","role":"SuperAdmin","email":"bhat@gmail.com","phone":"8082166214","uid":user.uid};
      //const res=await firestoreQueries.handleUpdate("DDOSDATA", "users",user.uid, data);
     const res=await firestoreQueries.FetchDataFromCollection("DDOSDATA", "users",20,"uid","==",user.uid);
+    console.log("user======>",user)
      if(res)
      {
       ActualUser=res[0];
