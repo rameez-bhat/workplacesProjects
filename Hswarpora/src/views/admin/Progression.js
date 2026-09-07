@@ -261,6 +261,7 @@ fetchData();
     value: Number(studentKey.replace("Student_", "")) 
   }
 ];
+console.log("Condt----->",Condt)
     	firestoreQueries.updateOrCreateByField(DatabaseName, "students", Condt, DateToSubmit).then((resultInside) => {
 			 console.log("resultInside:", resultInside);
 			 if(resultInside.status=="success")
