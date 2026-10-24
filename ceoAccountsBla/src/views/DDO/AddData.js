@@ -234,6 +234,7 @@ const formulas = sheetData.data[0].rowData.map(row => {
 
   return columnName;
 };
+
 const fetchData = async (
   sheetID1,
   sheetName1,
@@ -243,147 +244,129 @@ const fetchData = async (
 ) => {
   showLoading();
 
+  console.time("Google Sheet Loading");
+
   try {
-    const BATCH_SIZE = 2000;
+    const BATCH_SIZE = 1000;
+    const CONCURRENT_REQUESTS = 4;
 
     sheetID = sheetID1;
     sheetName = sheetName1;
 
-    console.time("Google Sheet Loading");
+    const baseURL =
+      `https://sheets.googleapis.com/v4/spreadsheets/${encodeURIComponent(sheetID1)}`;
 
-    // STEP 1: Fetch sheet metadata only.
-    // This gives us the grid row count and merged ranges
-    // without downloading the full cell data.
+    const escapedSheetName = sheetName1.replace(/'/g, "''");
+    const quotedSheetName = `'${escapedSheetName}'`;
 
-    const metadataResponse = await axios.get(
-      `https://sheets.googleapis.com/v4/spreadsheets/${encodeURIComponent(sheetID1)}`,
-      {
-        params: {
-          fields:
-            "sheets(properties(sheetId,title,gridProperties(rowCount)),merges)",
-          key: API_KEY
-        }
+    // STEP 1: Fetch sheet metadata
+    const metadataResponse = await axios.get(baseURL, {
+      params: {
+        fields:
+          "sheets(properties(sheetId,title,gridProperties(rowCount)),merges)",
+        key: API_KEY
       }
-    );
+    });
 
     const metadataSheet = (metadataResponse.data.sheets || []).find(
-      (sheet) => sheet.properties.title === sheetName1
+      sheet => sheet.properties.title === sheetName1
     );
 
     if (!metadataSheet) {
       throw new Error(`Sheet "${sheetName1}" not found`);
     }
 
-    const totalRows =
+    const allocatedRows =
       metadataSheet.properties.gridProperties.rowCount || 0;
 
-    console.log("Total grid rows:", totalRows);
+    // STEP 2: Find the last column from first 10 rows
+    const headerRange = `${quotedSheetName}!1:10`;
 
-    const allRowData = [];
-    const allRows = [];
-    const allFormulas = [];
-
-    // STEP 2: Download rows in manageable batches.
-    // Sequential fetching avoids overwhelming the browser
-    // with many large responses at the same time.
-
-const escapedSheetName = sheetName1.replace(/'/g, "''");
-
-// Fetch first row
-const firstRowRange = `'${escapedSheetName}'!1:10`;
-
-const firstRowResponse = await axios.get(
-  `https://sheets.googleapis.com/v4/spreadsheets/${encodeURIComponent(sheetID1)}/values/${encodeURIComponent(firstRowRange)}`,
-  {
-    params: {
-      key: API_KEY
-    }
-  }
-);
-//console.log("  firstRowResponse.data.values====>",  firstRowResponse.data.values)
-const first10Rows = firstRowResponse.data.values || [];
-
-let lastColumnIndex = 0;
-let maxColumnRow = 0;
-
-// Check all 10 rows and find the last non-empty column
-for (let rowIndex = 0; rowIndex < first10Rows.length; rowIndex++) {
-  const row = first10Rows[rowIndex] || [];
-
-  for (let colIndex = row.length - 1; colIndex >= 0; colIndex--) {
-    const value = row[colIndex];
-
-    if (
-      value !== null &&
-      value !== undefined &&
-      String(value).trim() !== ""
-    ) {
-      const columnCount = colIndex + 1;
-
-      if (columnCount > lastColumnIndex) {
-        lastColumnIndex = columnCount;
-        maxColumnRow = rowIndex + 1;
+    const headerResponse = await axios.get(
+      `${baseURL}/values/${encodeURIComponent(headerRange)}`,
+      {
+        params: {
+          key: API_KEY
+        }
       }
+    );
 
-      break;
+    const first10Rows = headerResponse.data.values || [];
+
+    let lastColumnIndex = 0;
+
+    first10Rows.forEach(row => {
+      for (let i = row.length - 1; i >= 0; i--) {
+        if (
+          row[i] !== null &&
+          row[i] !== undefined &&
+          String(row[i]).trim() !== ""
+        ) {
+          lastColumnIndex = Math.max(lastColumnIndex, i + 1);
+          break;
+        }
+      }
+    });
+
+    if (!lastColumnIndex) {
+      throw new Error("No columns found in first 10 rows");
     }
-  }
-}
 
-if (lastColumnIndex === 0) {
-  throw new Error("No column data found in the first 10 rows");
-}
+    const COLUMN_END = getExcelColumnName(lastColumnIndex);
 
-const COLUMN_END = getExcelColumnName(lastColumnIndex);
+    console.log("Last column:", COLUMN_END);
 
-//console.log("First row:", firstRow);
-console.log("Last column index:", lastColumnIndex);
-console.log("Last column name:", COLUMN_END);
+    // STEP 3: Determine last row containing values
+    // Only fetch the first column for this check if it
+    // reliably contains data for every populated row.
+    //
+    // Otherwise scan all required columns to ensure
+    // no rows are omitted.
 
-// Fetch grid data in batches
-for (
-  let startRow = 1;
-  startRow <= totalRows;
-  startRow += BATCH_SIZE
-) {
-  const endRow = Math.min(
-    startRow + BATCH_SIZE - 1,
-    totalRows
-  );
+    const usedRange = `${quotedSheetName}!A1:${COLUMN_END}${allocatedRows}`;
 
-  const range = `'${escapedSheetName}'!A${startRow}:${COLUMN_END}${endRow}`;
+    const usedResponse = await axios.get(
+      `${baseURL}/values/${encodeURIComponent(usedRange)}`,
+      {
+        params: {
+          key: API_KEY,
+          valueRenderOption: "FORMATTED_VALUE"
+        }
+      }
+    );
 
-  console.log("Fetching range:", range);
+    const usedRows = usedResponse.data.values || [];
 
-  const response = await axios.get(
-    `https://sheets.googleapis.com/v4/spreadsheets/${encodeURIComponent(sheetID1)}`,
-    {
-      params: {
-        includeGridData: true,
-        ranges: range,
-        fields:
-          "sheets(data(startRow,startColumn,rowData(values(formattedValue,userEnteredValue,effectiveValue,userEnteredFormat,effectiveFormat,note,dataValidation,textFormatRuns))))",
-        key: API_KEY
+    let totalRows = 0;
+
+    for (let i = usedRows.length - 1; i >= 0; i--) {
+      const row = usedRows[i] || [];
+
+      if (
+        row.some(value =>
+          value !== null &&
+          value !== undefined &&
+          String(value).trim() !== ""
+        )
+      ) {
+        totalRows = i + 1;
+        break;
       }
     }
-  );
 
-  const responseSheet =
-    response.data.sheets &&
-    response.data.sheets[0];
+    // Preserve at least the configured header rows
+    totalRows = Math.max(
+      totalRows,
+      headerRowCount || 0
+    );
 
-  const gridData =
-    responseSheet &&
-    responseSheet.data &&
-    responseSheet.data[0];
+    totalRows = Math.min(totalRows, allocatedRows);
 
-  const batchRowData =
-    gridData && gridData.rowData
-      ? gridData.rowData
-      : [];
+    console.log("Allocated rows:", allocatedRows);
+    console.log("Rows to load:", totalRows);
 
-  // Continue with your existing processing of batchRowData
-}
+    // STEP 4: Build batch ranges
+    const batches = [];
 
     for (
       let startRow = 1;
@@ -395,86 +378,105 @@ for (
         totalRows
       );
 
-      const range =
-        "'" +
-        sheetName1.replace(/'/g, "''") +
-        "'!A" +
-        startRow +
-        ":" +
-        COLUMN_END +
-        endRow;
+      batches.push({
+        startRow,
+        endRow,
+        range:
+          `${quotedSheetName}!A${startRow}:${COLUMN_END}${endRow}`
+      });
+    }
 
-      const response = await axios.get(
-        `https://sheets.googleapis.com/v4/spreadsheets/${encodeURIComponent(sheetID1)}`,
-        {
-          params: {
-            includeGridData: true,
-            ranges: range,
-            fields:
-              "sheets(data(startRow,startColumn,rowData(values(formattedValue,userEnteredValue,effectiveValue,userEnteredFormat,effectiveFormat,note,dataValidation,textFormatRuns))))",
-            key: API_KEY
-          }
+    // STEP 5: Fetch grid data concurrently
+    const batchResults = new Array(batches.length);
+
+    const fetchBatch = async (batch, index) => {
+      const response = await axios.get(baseURL, {
+        params: {
+          includeGridData: true,
+          ranges: batch.range,
+          fields:
+            "sheets(data(startRow,startColumn,rowData(values(formattedValue,userEnteredValue,effectiveValue,userEnteredFormat,effectiveFormat,note,dataValidation,textFormatRuns))))",
+          key: API_KEY
         }
-      );
+      });
 
-      const responseSheet =
+      const sheet =
         response.data.sheets &&
         response.data.sheets[0];
 
-      const gridData =
-        responseSheet &&
-        responseSheet.data &&
-        responseSheet.data[0];
+      const grid =
+        sheet &&
+        sheet.data &&
+        sheet.data[0];
 
-      const batchRowData =
-        gridData && gridData.rowData
-          ? gridData.rowData
+      const rowData =
+        grid && grid.rowData
+          ? grid.rowData
           : [];
 
-      // The API may omit trailing blank rows.
-      // Preserve their positions in the combined grid.
+      // Preserve missing trailing rows
+      const expectedCount =
+        batch.endRow - batch.startRow + 1;
 
-      for (
-        let offset = 0;
-        offset < endRow - startRow + 1;
-        offset++
-      ) {
-        const row = batchRowData[offset] || { values: [] };
+      const normalizedRows = [];
 
-        allRowData.push(row);
-
-        const cells = row.values || [];
-
-        allRows.push(
-          cells.map((cell) => {
-            if (!cell) return "";
-
-            if (cell.formattedValue !== undefined) {
-              return cell.formattedValue;
-            }
-
-            return "";
-          })
-        );
-
-        allFormulas.push(
-          cells.map((cell) => {
-            return cell &&
-              cell.userEnteredValue &&
-              cell.userEnteredValue.formulaValue
-              ? cell.userEnteredValue.formulaValue
-              : "";
-          })
+      for (let i = 0; i < expectedCount; i++) {
+        normalizedRows.push(
+          rowData[i] || { values: [] }
         );
       }
 
+      batchResults[index] = normalizedRows;
+
       console.log(
-        `Loaded ${endRow} / ${totalRows} rows`
+        `Loaded batch ${index + 1}/${batches.length}`
+      );
+    };
+
+    // Run up to 4 batches at a time
+    for (
+      let i = 0;
+      i < batches.length;
+      i += CONCURRENT_REQUESTS
+    ) {
+      const group = batches.slice(
+        i,
+        i + CONCURRENT_REQUESTS
+      );
+
+      await Promise.all(
+        group.map((batch, groupIndex) =>
+          fetchBatch(batch, i + groupIndex)
+        )
       );
     }
 
-    // STEP 3: Reconstruct the grid-data structure
-    // expected by your existing React application.
+    // STEP 6: Combine results in correct row order
+    const allRowData = [].concat(...batchResults);
+
+    const allRows = allRowData.map(row => {
+      const cells = row.values || [];
+
+      return cells.map(cell => {
+        if (!cell) return "";
+
+        return cell.formattedValue !== undefined
+          ? cell.formattedValue
+          : "";
+      });
+    });
+
+    const allFormulas = allRowData.map(row => {
+      const cells = row.values || [];
+
+      return cells.map(cell => {
+        return cell &&
+          cell.userEnteredValue &&
+          cell.userEnteredValue.formulaValue
+          ? cell.userEnteredValue.formulaValue
+          : "";
+      });
+    });
 
     const combinedGridData = [
       {
@@ -486,13 +488,11 @@ for (
 
     const mergedRanges = metadataSheet.merges || [];
 
-    // STEP 4: Update your existing states.
-
+    // STEP 7: Update React states
     setheaderRowCount(headerRowCount);
-
     setFirstFewColumnToIgnore(LableColumnCount);
 
-    setSheetsData((prev) => [
+    setSheetsData(prev => [
       ...prev,
       {
         sheetName: sheetName1,
@@ -501,37 +501,29 @@ for (
     ]);
 
     setMergedRanges(mergedRanges);
-
     setFormatedData(allRowData);
-
     setFormatedDataProperties(combinedGridData);
-
     setEditedRows(allRows);
-
     setFormulasData(allFormulas);
-
     setListOfColumnToVerify(vefifyfields);
-
     setTableData(allRows);
 
-    console.timeEnd("Google Sheet Loading");
-
-    console.log("Total rows loaded:", allRows.length);
+    console.log("Total loaded rows:", allRows.length);
+    console.log("Total batches:", batches.length);
 
   } catch (error) {
     console.error("Error fetching sheet data:", error);
 
     if (error.response) {
-      console.error(
-        "Google Sheets API response:",
-        error.response.data
-      );
+      console.error("API error:", error.response.data);
     }
 
   } finally {
+    console.timeEnd("Google Sheet Loading");
     hideLoading();
   }
 };
+
 
   const evaluateExpressionInside = (expression, rowValues) => {
   const replacedExpression = expression.replace(/[A-Z]+\d+/g, (cellRef) => {
