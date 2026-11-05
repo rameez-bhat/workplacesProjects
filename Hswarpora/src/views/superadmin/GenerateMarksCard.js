@@ -154,23 +154,19 @@ const Validation = () => {
     return SUBJECTS.filter(({ key }) => {
       const studentHasSubject = !!currentResult?.subjects?.[key]
       const classHasSubject = !!classSubjectList?.[key]
-
       return studentHasSubject && (classHasSubject || Object.keys(classSubjectList).length === 0)
-    }).map(({ key, label }) => {
-      const marks = sortedExamKeys.map((exam) =>
-        Number(currentResult?.subjects?.[key]?.[exam] || 0),
-      )
-
-      const marksObtained = marks.reduce((total, value) => total + Number(value || 0), 0)
-
-      return {
-        key,
-        label,
-        marks,
-        marksObtained,
-        maximumMarks,
-      }
     })
+      .map(({ key, label }) => {
+        const marks = sortedExamKeys.map((exam) =>
+          Number(currentResult?.subjects?.[key]?.[exam] || 0),
+        )
+        const marksObtained = marks.reduce((total, value) => total + value, 0)
+        return { key, label, marks, marksObtained, maximumMarks }
+      })
+      .filter(({ key, marksObtained }) => {
+        const optionalVocational = key === 'apparel' || key === 'retail'
+        return !optionalVocational || marksObtained !== 0
+      })
   }, [currentResult, classSubjectList, sortedExamKeys, maximumMarks])
 
   const grandMaxMarks = useMemo(
